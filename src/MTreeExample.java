@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 
-public class App {
+public class MTreeExample {
+
     public static void main(String[] args) {
         // Creamos algunos puntos para nuestro árbol
 
