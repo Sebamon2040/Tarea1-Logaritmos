@@ -2,28 +2,48 @@ import java.util.ArrayList;
 
 public class MTree {
     private MTreeNode root;
-    private int B;
+    private double  B;
+    private int diskI_0s;
     
     // Constructor
     public MTree(MTreeNode root) {
         this.root = root;
     }
     
+    public void  resetDiskAccesess(){
+        diskI_0s = 0;
+    }
+
+    public double getB(){
+        return B;
+    }
+
+
+    public int getDiskAccesses(){
+        return diskI_0s;
+    }
+
+    public void addDiskAccess(){
+        diskI_0s++;
+    }
     // Método de búsqueda
     public ArrayList<Point> search(Point q, double r) {
+        resetDiskAccesess();
         ArrayList<Point> result = new ArrayList<>();
         searchHelper(root, q, r, result);
+        System.err.println("Disk accesses: " + getDiskAccesses()  );
         return result;
     }
     
     // Método auxiliar para búsqueda recursiva
     private void searchHelper(MTreeNode node, Point q, double r, ArrayList<Point> result) {
+        addDiskAccess();
         if (node.isLeaf()) {
             // Nodo es una hoja
             for (Entry entry : node.getEntries()) {
                 if (distance(entry.getPoint(), q) <= r) {
                     result.add(entry.getPoint());
-                    System.out.println("Punto " + entry.getPoint().getX() + entry.getPoint().getY() + " agregado al resultado.");
+                    
                 }
 
             }
@@ -31,7 +51,7 @@ public class MTree {
             // Nodo es interno
             for (Entry entry : node.getEntries()) {
                 if (distance(entry.getPoint(), q) <= entry.getCoveringRadius() + r) {
-                    System.out.println("Explorando nodo interno con punto " + entry.getPoint().getX() + entry.getPoint().getY());
+                    
                     searchHelper(entry.getChildNode(), q, r, result);
                 }
             }
@@ -52,3 +72,5 @@ public class MTree {
         }
     }   
 }
+
+
