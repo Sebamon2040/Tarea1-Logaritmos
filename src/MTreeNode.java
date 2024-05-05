@@ -8,6 +8,7 @@ public class MTreeNode {
     private boolean isLeaf;
     private double minCap;
     private double maxCap;
+    private MTreeNode childNode;
     
     // Constructor
     public MTreeNode(boolean isLeaf, double maxCapacity) {
@@ -15,6 +16,7 @@ public class MTreeNode {
         this.isLeaf = isLeaf;
         this.minCap = Math.floor(maxCapacity/2);
         this.maxCap = maxCapacity;
+        this.childNode = null;
     }
     
     // Método para agregar una entrada al nodo
@@ -30,6 +32,16 @@ public class MTreeNode {
         return entries;
     }
     
+
+    public MTreeNode getChildNode() {
+        return childNode;
+    }
+
+    public void setChildNode(MTreeNode childNode) {
+        this.childNode = childNode;
+    }
+
+
     
     
 }

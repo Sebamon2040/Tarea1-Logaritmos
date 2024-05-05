@@ -1,7 +1,7 @@
 public class Entry {
     private final Point point;
-    private final Double coveringRadius;
-    private final MTreeNode childNode; // Solo se usa si este es un nodo interno
+    private Double coveringRadius;
+    private MTreeNode childNode; // Solo se usa si este es un nodo interno
     
     // Constructor
     public Entry(Point point, Double coveringRadius, MTreeNode childNode) {
@@ -18,7 +18,15 @@ public class Entry {
         return this.coveringRadius;
     }
 
+    public void setCoveringRadius(double coveringRadius) {
+        this.coveringRadius = coveringRadius;
+    }
+
     public MTreeNode getChildNode() {
         return this.childNode;
+    }
+
+    public void setChildNode(MTreeNode childNode) {
+        this.childNode = childNode;
     }
 }
