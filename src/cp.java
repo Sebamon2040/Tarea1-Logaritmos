@@ -40,7 +40,7 @@ public class cp{
 
     private static List<List<Point>> assingPointsToClosestSamples(List<Point> points, List<Point> samples){
         List<List<Point>> clusters = new ArrayList<>(samples.size());
-        for (int i=0; i<samples.size(); i++){
+        for(int i=0; i<samples.size(); i++){
             clusters.add(new ArrayList<>());
         }
         
