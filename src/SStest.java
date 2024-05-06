@@ -5,7 +5,7 @@ import java.util.Random;
 public class SStest {
     public static void main(String[] args) {
         // Generar 1000 puntos aleatorios
-        List<Point> points = generatePoints(4096);
+        List<Point> points = generatePoints(8192);
 
         // Crear una instancia de la clase que implementa el algoritmo SS
         ss sextonSwinbank = new ss();
@@ -27,10 +27,22 @@ public class SStest {
         System.out.println("Tiempo que se tardó en construir el árbol: " + duration + " milisegundos");
 
         MTree tree = new MTree(root);
+        List <Integer> diskAccesses = new ArrayList<>();
+
         for (Point point : points) {
-            System.out.println("Punto: " + point);
-            ArrayList<Point> result = tree.search(point, 0.1);
+  
+            int accessCount = tree.search(point, 0.1);
+            diskAccesses.add(accessCount);
         }
+
+        // Calcular e imprimir el número promedio de accesos a disco
+        int sum = 0;
+        for (int accessCount : diskAccesses) {
+            sum += accessCount;
+        }
+        double average = sum / diskAccesses.size();
+
+        log.print("Número promedio de accesos a disco: " + average);
     }
 
     public static List<Point> generatePoints(int numPoints) {

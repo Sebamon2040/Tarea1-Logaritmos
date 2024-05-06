@@ -27,12 +27,13 @@ public class MTree {
     }
 
     // Método de búsqueda
-    public ArrayList<Point> search(Point q, double r) {
+    public int search(Point q, double r) {
         resetDiskAccesess();
         ArrayList<Point> result = new ArrayList<>();
         searchHelper(root, q, r, result);
         System.err.println("Disk accesses: " + getDiskAccesses());
-        return result;
+
+        return getDiskAccesses();
     }
 
     // Método auxiliar para búsqueda recursiva

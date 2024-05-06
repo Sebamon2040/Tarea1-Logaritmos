@@ -286,6 +286,7 @@ public class ss {
                 C_in_aux.add((Point) tuple.get(0));
             }
             List<List> C_mra = new ArrayList<>();
+            log.print("Clustering C_in_aux");
             List<List<Point>> C_out_aux = Cluster(C_in_aux, B);
             
             for (List<Point> cluster : C_out_aux){
