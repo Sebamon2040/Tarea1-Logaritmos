@@ -20,7 +20,7 @@ public class MTreeNode {
 
     // Método para agregar una entrada al nodo
     public void addEntry(Entry entry) {
-        entries.add(entry);
+        entries.add(entry);     
     }
 
     public boolean isLeaf() {
