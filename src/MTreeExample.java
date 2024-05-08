@@ -13,11 +13,9 @@ public class MTreeExample {
         MTree tree = buildExampleTree();
 
         // Ahora podemos probar la función de búsqueda
-        ArrayList<Point> searchResult = tree.search(queryPoint, searchRadius);
-        System.out.println("Puntos encontrados dentro del radio de búsqueda:");
-        for (Point point : searchResult) {
-            System.out.println("(" + point.getX() + ", " + point.getY() + ")");
-        }
+        int searchResult = tree.search(queryPoint, searchRadius);
+
+
     }
 
     // Método para construir un árbol de ejemplo

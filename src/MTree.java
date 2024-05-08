@@ -31,7 +31,7 @@ public class MTree {
         resetDiskAccesess();
         ArrayList<Point> result = new ArrayList<>();
         searchHelper(root, q, r, result);
-        System.err.println("Disk accesses: " + getDiskAccesses());
+
 
         return getDiskAccesses();
     }
