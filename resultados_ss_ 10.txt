@@ -1,0 +1,2 @@
+Average disk accesses : 5.830078125 Time taken: 3.4951078000000004ms for 2 ^ 10points
+

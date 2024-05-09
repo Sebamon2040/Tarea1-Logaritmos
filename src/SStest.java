@@ -1,3 +1,7 @@
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -18,7 +22,7 @@ public class SStest {
         // tomamos el tiempo en crear el arbol
         long startTime = System.nanoTime();
         // Crear el árbol M usando el algoritmo SS con un valor B de 512
-        MTreeNode root = sextonSwinbank.makeTree(points, 512);
+        MTreeNode root = sextonSwinbank.makeTree(points, 146);
         long endTime = System.nanoTime();
         double timeTaken = (endTime - startTime) / 1e6; // tiempo en milisegundos
         List<Integer> diskAccessesList = new ArrayList<>();
@@ -36,6 +40,17 @@ public class SStest {
         double  averageDiskAccesses = sum / diskAccessesList.size();
 
         log.print("Average disk accesses : " + averageDiskAccesses + " Time taken: " + timeTaken /1000 + "ms" +  " for 2 ^ " + i + "points\n"); 
+        // guardamos el resultado en un archivo de texto
+        String filename = MessageFormat.format("resultados_ss_ {0}.txt", i);
+        try {
+            FileWriter fileWriter = new FileWriter(filename);
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+            printWriter.println("Average disk accesses : " + averageDiskAccesses + " Time taken: " + timeTaken /1000 + "ms" +  " for 2 ^ " + i + "points\n");
+            printWriter.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public static List<Point> generatePoints(int numPoints) {
