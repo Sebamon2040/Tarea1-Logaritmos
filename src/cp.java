@@ -18,22 +18,30 @@ public class cp {
             }
             return new MTree(leafNode);
         }
+        log.print("points: " + points.size() + "\n");
         // paso 2
-        int k = Math.min(B, points.size() / B); // se calcula el numero de puntos que se van a seleccionar para ser los
-                                                // centroides
+        List<List<Point>> F = new ArrayList<>();
+        List<Point> samples = new ArrayList<>();
+        do {// se calcula el numero de puntos que se van a seleccionar para ser los
+            // centroides
+            int k = Math.min(B, (int) Math.ceil(((double) points.size()) / B));
+            log.print("k: " + k + "\n");
 
-        List<Point> samples = chooseRandomSamples(points, k); // se seleccionan los centroides
-        // paso 3
-        List<List<Point>> F = assingPointsToClosestSamples(points, samples);
-        // paso 4
-        List<List<Point>> Fr = redistributeSamples(F, b, samples); // se redistribuyen los puntos en los clusters
-        // paso 5
-        if (Fr.size() == 1) { // si solo hay un cluster, se rehace el proceso
-            return buildCp(Fr.get(0), B, b);
-        }
+            samples = chooseRandomSamples(points, k); // se seleccionan los centroides
+            log.print("samples: " + samples.size() + "\n");
+
+            // paso 3
+            F = assingPointsToClosestSamples(points, samples);
+            log.print("F: " + F.size() + "\n");
+            // paso 4
+            F = redistributeSamples(F, b, samples); // se redistribuyen los puntos en los clusters
+            log.print("F: " + F.size() + "\n");
+            // paso 5
+
+        } while (F.size() == 1);
         // paso 6
         List<MTree> subTrees = new ArrayList<>();
-        for (List<Point> cluster : Fr) {
+        for (List<Point> cluster : F) {
             MTree subTree = buildCp(cluster, B, b);
             subTrees.add(subTree);
         }
