@@ -1,7 +1,7 @@
 public class Point {
     private double x;
     private double y;
-    
+
     // Constructor
     public Point(double x, double y) {
         this.x = x;
@@ -16,9 +16,13 @@ public class Point {
         return y;
     }
 
+    public boolean equals(Point p) {
+        return this.x == p.getX() && this.y == p.getY();
+    }
+
     public double distance(Point p) {
         return Math.sqrt(Math.pow(p.getX() - this.x, 2) + Math.pow(p.getY() - this.y, 2));
     }
-    
+
     // Otros métodos según sea necesario
 }
