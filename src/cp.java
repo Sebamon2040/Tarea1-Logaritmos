@@ -55,7 +55,7 @@ public class cp {
                     // F(samples)
                     for (MTreeNode childNode : childNodes) {
                         subTrees.add(childNode); // añado el subarbol
-                        childNode.getRootPoint(); // obtengo el punto raiz
+
                         samples.add(childNode.getRootPoint()); // añado el punto raiz
                     }
                 } else {
@@ -97,11 +97,16 @@ public class cp {
                 log.print("entry child: " + entry.getChildNode() + "\n");
             }
             System.out.println("Construcción de Tsup completada.");
+            log.print("tamaño de Tsup: " + Tsup.getEntries().size() + "\n");
+
 
             // Paso 11
             System.out.println("Uniendo los subárboles Tprime a las hojas correspondientes en Tsup...");
+            int tj_sum =0;
             for (MTreeNode Tj : Tprime) {
-                // Encuentra la hoja en Tsup correspondiente al punto pfj en F
+                tj_sum += Tj.getEntries().size();
+
+                log.print("tamaño de Tj: " + Tj.getEntries().size() + "\n");
 
                 Point pfj = Tj.getRootPoint(); // obtengo el punto raiz de Tj
 
@@ -109,7 +114,7 @@ public class cp {
                 // encuentra la hoja en Tsup correspondiente al punto pfj en F y
                 // une Tj a // esa hoja
             }
-
+            log.print("suma de todos los subarboles: " + tj_sum + "\n");
             // Paso 12
             System.out.println("Actualizando los radios cobertores para cada entrada en Tsup...");
             // Actualiza los radios cobertores para cada entrada en Tsup
@@ -118,6 +123,8 @@ public class cp {
 
             // Paso 13
             System.out.println("Retornando Tsup...");
+            log.print("samples ammount in Tsup: " + samples.size() + "\n");
+            log.print("Entries in Tsup: " + countEntrys(Tsup) + "\n");
             return Tsup;
 
         }
@@ -226,5 +233,15 @@ public class cp {
                 entry.setCoveringRadius(maxDistance);
             }
         }
+    }
+    public static int countEntrys(MTreeNode node) {
+        int suma = node.getEntries().size();
+
+        for (Entry entry : node.getEntries()) {
+            if (entry.getChildNode() != null) {
+                suma += countEntrys(entry.getChildNode());
+            }
+        }
+        return suma;
     }
 }
