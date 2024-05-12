@@ -75,7 +75,7 @@ public class MTreeNode {
         }
         int maxChildHeight = 0;
         for (Entry entry : this.getEntries()) {
-            MTree childSubtree = new MTree(entry.getChildNode());
+            MTreeNode childSubtree = entry.getChildNode();
             int childHeight = childSubtree.getHeight();
             if (childHeight > maxChildHeight) {
                 maxChildHeight = childHeight;

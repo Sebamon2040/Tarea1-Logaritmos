@@ -23,7 +23,7 @@ public class TestCp {
         List<Integer> diskAccessesList = new ArrayList<>();
         // buscar en el Mtree para cada punto
         for (Point point : points) {
-            int diskAccesses = mtree.search(point, 0.1);
+            int diskAccesses = mtree.search(point, 0.02);
             diskAccessesList.add(diskAccesses);
         }
         // calculamos el promedio de los accesos a disco
