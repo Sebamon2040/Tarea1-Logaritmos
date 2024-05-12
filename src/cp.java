@@ -129,7 +129,6 @@ public class cp {
             log.print("samples ammount in Tsup: " + samples.size() + "\n");
             log.print("Entries in Tsup: " + countEntrys(Tsup) + "\n");
             return Tsup;
-
         }
     }
 
