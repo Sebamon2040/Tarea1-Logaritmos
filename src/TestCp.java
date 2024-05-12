@@ -3,18 +3,38 @@ import java.util.List;
 import java.util.Random;
 
 public class TestCp {
-
     public static void main(String[] args) {
-        // Crea una lista de puntos
-        // Generar 1000 puntos aleatorios
-        List<Point> points = generatePoints(1024);
+        // Crear una instancia de la clase que implementa el algoritmo SS
 
-        // Construye un árbol M usando el método CP
+        int i = Integer.parseInt(args[0]);
 
-        MTree mTree = cp.buildCp(points, 512, 256);
+        int numPoints = (int) Math.pow(2, i);
 
-        // Imprime la altura del árbol resultante
-        System.out.println("Altura del árbol: " + mTree.getHeight());
+        // Generar puntos aleatorios
+        List<Point> points = generatePoints(numPoints);
+        // tomamos el tiempo en crear el arbol
+        long startTime = System.nanoTime();
+        // Crear el árbol M usando el algoritmo SS con un valor B de 512
+        MTreeNode mtreeNode = cp.buildCp(points, 146, 146 / 2);
+        MTree mtree = new MTree(mtreeNode);
+        long endTime = System.nanoTime();
+        double timeTaken = (endTime - startTime) / 1e6; // tiempo en milisegundos
+        log.print(mtree.getHeight() + "\n");
+        List<Integer> diskAccessesList = new ArrayList<>();
+        // buscar en el Mtree para cada punto
+        for (Point point : points) {
+            int diskAccesses = mtree.search(point, 0.1);
+            diskAccessesList.add(diskAccesses);
+        }
+        // calculamos el promedio de los accesos a disco
+        double sum = 0;
+        for (int diskAccesses : diskAccessesList) {
+            sum += diskAccesses;
+        }
+        double averageDiskAccesses = sum / diskAccessesList.size();
+
+        log.print("Average disk accesses : " + averageDiskAccesses + " Time taken: " + timeTaken / 1000 + "ms"
+                + " for 2 ^ " + i + "points\n");
     }
 
     public static List<Point> generatePoints(int numPoints) {

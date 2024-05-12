@@ -8,6 +8,7 @@ public class MTreeNode {
     private double minCap;
     private double maxCap;
     private MTreeNode childNode;
+    private Point rootPoint;
 
     // Constructor
     public MTreeNode(boolean isLeaf, double maxCapacity) {
@@ -16,15 +17,44 @@ public class MTreeNode {
         this.minCap = Math.floor(maxCapacity / 2);
         this.maxCap = maxCapacity;
         this.childNode = null;
+        this.rootPoint = null;
     }
 
     // Método para agregar una entrada al nodo
     public void addEntry(Entry entry) {
-        entries.add(entry);     
+        entries.add(entry);
+    }
+
+    public void setRootPoint(Point point) {
+        this.rootPoint = point;
+    }
+
+    public Point getRootPoint() {
+        return this.rootPoint;
+    }
+
+    // Método para extraer una entrada que contiene un punto dado
+    public Entry extractEntryWithPoint(Point point) {
+        for (Entry entry : entries) {
+            if (entry.getPoint().equals(point)) {
+                entries.remove(entry);
+                return entry;
+            }
+        }
+        return null; // Retorna null si no se encuentra ninguna entrada con el punto dado
+    }
+
+    // Método para agregar una entrada al inicio del nodo
+    public void addEntryAtBeginning(Entry entry) {
+        entries.add(0, entry);
     }
 
     public boolean isLeaf() {
         return isLeaf;
+    }
+
+    public void setIsLeaf(boolean isLeaf) {
+        this.isLeaf = isLeaf;
     }
 
     public List<Entry> getEntries() {

@@ -2,21 +2,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/**
- *
- * @author elcar
- */
 public class cp {
 
-    public static MTree buildCp(List<Point> points, int B, int b) {
+    public static MTreeNode buildCp(List<Point> points, int B, int b) {
         // paso 1
-        if (points.size() <= B) { // si el numero de puntos es menor o igual a la capacidad minima del nodo, se
-                                  // crea un arbol y se insertan todos los puntos
+        if (points.size() <= B) {
             MTreeNode leafNode = new MTreeNode(true, B);
             for (Point p : points) {
                 leafNode.addEntry(new Entry(p, null, null));
             }
-            return new MTree(leafNode);
+            return leafNode;
         }
         log.print("points: " + points.size() + "\n");
         // paso 2
@@ -40,40 +35,52 @@ public class cp {
 
         } while (F.size() == 1);
         // paso 6
-        List<MTree> subTrees = new ArrayList<>();
+        List<MTreeNode> subTrees = new ArrayList<>();
         for (List<Point> cluster : F) {
-            MTree subTree = buildCp(cluster, B, b);
-            subTrees.add(subTree);
+            MTreeNode sTree = buildCp(cluster, B, b);
+            // añade el punto raiz de ese subarbol al inicio de su lista de entrys
+            Point rootPoint = samples.get(F.indexOf(cluster)); // punto raiz del subarbol
+            Entry rootEntry = sTree.extractEntryWithPoint(rootPoint);
+            if (rootEntry != null) {
+                sTree.addEntryAtBeginning(rootEntry); // añade el punto raiz al inicio
+            }
+            subTrees.add(sTree);
         }
 
-        // paso 7
-        for (MTree subTree : subTrees) {
-            if (subTree.getRoot().getEntries().size() < b) {
+        // Paso 7: Crear una copia de la lista subTrees para evitar
+        // ConcurrentModificationException
+        List<MTreeNode> subTreesCopy = new ArrayList<>(subTrees);
+        for (MTreeNode subTree : subTreesCopy) {
+            if (subTree.getEntries().size() < b) {
                 int idx = subTrees.indexOf(subTree);
-                samples.remove(idx);
+                samples.remove(idx); // elimino pfj de F(samples)
+                subTrees.remove(subTree); // elimino el subarbol
 
                 List<MTreeNode> childNodes = new ArrayList<>();
-                for (Entry entry : subTree.getRoot().getEntries()) {
-                    childNodes.add(entry.getChildNode());
-                }
-
-                for (MTreeNode childNode : childNodes) {
-                    for (Entry entry : childNode.getEntries()) {
-                        samples.add(entry.getPoint());
+                // obtengo los subarboles que lo remplazaran
+                for (Entry entry : subTree.getEntries()) {
+                    if (entry != null) { // se salta la null
+                        childNodes.add(entry.getChildNode());
                     }
+                }
+                // añado los nuevos subarboles a la lista de subarboles y pongo sus pfj en
+                // F(samples)
+                for (MTreeNode childNode : childNodes) {
+                    subTrees.add(childNode); // añado el subarbol
+                    Point rootPoint = childNode.getEntries().get(0).getPoint(); // obtengo el punto raiz
+                    samples.add(rootPoint); // añado el punto raiz
                 }
             }
         }
 
         // paso 8
         int h = Integer.MAX_VALUE;
-        for (MTree subTree : subTrees) {
+        for (MTreeNode subTree : subTrees) {
             h = Math.min(h, subTree.getHeight());
         }
-        List<MTree> Tprime = new ArrayList<>(); // se inicializa T' como una lista vacia
-
+        List<MTreeNode> Tprime = new ArrayList<>(); // se inicializa T' como una lista vacia
         // paso 9
-        for (MTree subTree : subTrees) {
+        for (MTreeNode subTree : subTrees) {
             if (subTree.getHeight() == h) {
                 Tprime.add(subTree);
             } else {
@@ -81,34 +88,46 @@ public class cp {
                 int idx = subTrees.indexOf(subTree);
                 samples.remove(idx);
                 // 9.2 y 9.3
-                List<MTreeNode> nodesOfHeightH = getNodesOfHeightH(subTree.getRoot(), h);
+                List<MTreeNode> nodesOfHeightH = getNodesOfHeightH(subTree, h);
                 for (MTreeNode node : nodesOfHeightH) {
-                    MTree newSubTree = new MTree(node);
-                    Tprime.add(newSubTree);
-                    for (Entry entry : node.getEntries()) {
-                        samples.add(entry.getPoint());
-                    }
+                    Tprime.add(node);
+                    // añade el punto raiz de ese subarbol a samples
+                    Point rootPoint = node.getEntries().get(0).getPoint();
+                    samples.add(rootPoint);
                 }
             }
         }
-        // paso 10
-        MTree Tsup = buildCp(samples, B, b);
-        // paso 11
-        for (MTree Tj : Tprime) {
-            // Encuentra la hoja en Tsup correspondiente al punto pfj en F
-            Point pfj = Tj.getRoot().getEntries().get(0).getPoint(); // Asume que pfj es el primer punto en la raíz de
-                                                                     // Tj
-            MTreeNode leaf = findLeaf(Tsup.getRoot(), pfj);
+        // Paso 10
+        System.out.println("Comenzando la construcción del super-árbol Tsup...");
+        MTreeNode Tsup = buildCp(samples, B, b);
+        System.out.println("Construcción de Tsup completada.");
 
-            // Une Tj a la hoja en Tsup
-            leaf.addEntry(new Entry(pfj, null, Tj.getRoot()));
+        // Paso 11
+        System.out.println("Uniendo los subárboles Tprime a las hojas correspondientes en Tsup...");
+        for (MTreeNode Tj : Tprime) {
+            // Encuentra la hoja en Tsup correspondiente al punto pfj en F
+            // toma el indice de Tj en Tprime
+            int idx = Tprime.indexOf(Tj);
+            Point pfj = Tsup.getEntries().get(idx).getPoint(); // Asume que el punto pfj en F es el punto de
+                                                               // la
+                                                               // entrada en la raíz de Tsup en la posición
+                                                               // idx
+            System.out.println("Punto pfj: " + pfj);
+            System.out.println("Buscando la hoja correspondiente en Tsup...");
+
+            findLeaf(Tsup, Tj, pfj);
+            log.print("is leaf?:" + Tsup.isLeaf()); // encuentra la hoja en Tsup correspondiente al punto pfj en F y
+                                                    // une Tj a // esa hoja
         }
 
         // Paso 12
+        System.out.println("Actualizando los radios cobertores para cada entrada en Tsup...");
         // Actualiza los radios cobertores para cada entrada en Tsup
-        updateCoveringRadii(Tsup.getRoot());
+        updateCoveringRadii(Tsup);
+        System.out.println("Actualización de radios cobertores completada.");
 
         // Paso 13
+        System.out.println("Retornando Tsup...");
         return Tsup;
 
     }
@@ -168,39 +187,31 @@ public class cp {
 
     public static List<MTreeNode> getNodesOfHeightH(MTreeNode node, int h) {
         List<MTreeNode> nodesOfHeightH = new ArrayList<>();
-        getNodesOfHeightHHelper(node, h, 0, nodesOfHeightH);
+        getNodesOfHeightHHelper(node, h, nodesOfHeightH);
         return nodesOfHeightH;
     }
 
-    private static void getNodesOfHeightHHelper(MTreeNode node, int h, int currentHeight,
+    private static void getNodesOfHeightHHelper(MTreeNode node, int h,
             List<MTreeNode> nodesOfHeightH) {
-        if (currentHeight == h) {
+        if (node.getHeight() == h) {
             nodesOfHeightH.add(node);
         } else if (node.isLeaf()) {
             return;
         } else {
             for (Entry entry : node.getEntries()) {
-                getNodesOfHeightHHelper(entry.getChildNode(), h, currentHeight + 1, nodesOfHeightH);
+                getNodesOfHeightHHelper(entry.getChildNode(), h, nodesOfHeightH);
             }
         }
     }
 
-    public static MTreeNode findLeaf(MTreeNode node, Point p) {
-        if (node.isLeaf()) {
-            for (Entry entry : node.getEntries()) {
-                if (entry.getPoint().equals(p)) {
-                    return node;
-                }
+    public static void findLeaf(MTreeNode node, MTreeNode Tj, Point pfj) {
+        MTreeNode Nodej = Tj;
+        for (Entry entry : node.getEntries()) { // recorro las entrys, buscando la que tiene a pfj
+            if (entry.getPoint().equals(pfj)) {
+                entry.setChildNode(Nodej);
+                node.setIsLeaf(false); // deja de ser una hoja pues ahora de el cuelga un subarbol
+                return;
             }
-            return null;
-        } else {
-            for (Entry entry : node.getEntries()) {
-                MTreeNode foundNode = findLeaf(entry.getChildNode(), p);
-                if (foundNode != null) {
-                    return foundNode;
-                }
-            }
-            return null;
         }
     }
 
@@ -211,7 +222,6 @@ public class cp {
             for (Entry entry : node.getEntries()) {
                 MTreeNode childNode = entry.getChildNode();
                 updateCoveringRadii(childNode);
-
                 double maxDistance = 0;
                 Point entryPoint = entry.getPoint();
                 for (Entry childEntry : childNode.getEntries()) {
@@ -225,5 +235,4 @@ public class cp {
             }
         }
     }
-
 }
