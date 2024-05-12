@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class Cluster {
@@ -85,6 +86,71 @@ public class Cluster {
             
         }
         
+    }
+    public static double distance(Cluster c1, Cluster c2) {
+        return c1.getMedioide().distance(c2.getMedioide());
+    }
+
+    public static ClusterPair closestPair(List<Cluster> clusters) {
+        clusters.sort(Comparator.comparingDouble(c -> c.calculateMedioide().getX()));
+        return closestPairUtil(clusters, clusters.size());
+    }
+
+    private static ClusterPair closestPairUtil(List<Cluster> clusters, int n) {
+        if (n <= 3) {
+            return bruteForce(clusters, n);
+        }
+
+        int mid = n / 2;
+        Cluster midCluster = clusters.get(mid);
+
+        ClusterPair dl = closestPairUtil(new ArrayList<>(clusters.subList(0, mid)), mid);
+        ClusterPair dr = closestPairUtil(new ArrayList<>(clusters.subList(mid, clusters.size())), n - mid);
+
+        double dlDist = distance(dl.getCluster1(), dl.getCluster2());
+        double drDist = distance(dr.getCluster1(), dr.getCluster2());
+
+        double d = Math.min(dlDist, drDist);
+        ClusterPair dPair = dlDist < drDist ? dl : dr;
+
+        List<Cluster> strip = new ArrayList<>();
+        for (Cluster c : clusters) {
+            if (Math.abs(c.getMedioide().getX() - midCluster.getMedioide().getX()) < d) {
+                strip.add(c);
+            }
+        }
+
+        strip.sort(Comparator.comparingDouble(c -> c.getMedioide().getY()));
+
+        double min = d;
+        ClusterPair minPair = dPair;
+
+        for (int i = 0; i < strip.size(); ++i) {
+            for (int j = i + 1; j < strip.size() && (strip.get(j).getMedioide().getY() - strip.get(i).getMedioide().getY()) < min; ++j) {
+                if (distance(strip.get(i), strip.get(j)) < min) {
+                    min = distance(strip.get(i), strip.get(j));
+                    minPair = new ClusterPair(strip.get(i), strip.get(j));
+                }
+            }
+        }
+
+        return minPair;
+    }
+
+    private static ClusterPair bruteForce(List<Cluster> clusters, int n) {
+        double min = Double.MAX_VALUE;
+        ClusterPair minPair = null;
+
+        for (int i = 0; i < n; ++i) {
+            for (int j = i + 1; j < n; ++j) {
+                if (distance(clusters.get(i), clusters.get(j)) < min) {
+                    min = distance(clusters.get(i), clusters.get(j));
+                    minPair = new ClusterPair(clusters.get(i), clusters.get(j));
+                }
+            }
+        }
+
+        return minPair;
     }
     
 }

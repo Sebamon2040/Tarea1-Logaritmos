@@ -24,22 +24,14 @@ public class ss {
     }
 
     public List<Cluster> findClosestClusters(List<Cluster> clusters) {
-        
-        double minDistance = Double.MAX_VALUE;
         List<Cluster> closestClusters = new ArrayList<>();
+        ClusterPair results = Cluster.closestPair(clusters);
 
-        for (int i = 0; i < clusters.size(); i++) {
-            for (int j = i + 1; j < clusters.size(); j++) {
-                double distance = clusterDistance(clusters.get(i), clusters.get(j));
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestClusters.clear();
-                    closestClusters.add(clusters.get(i));
-                    closestClusters.add(clusters.get(j));
-                }
-            }
-        }
-        
+        Cluster cluster1 = results.getCluster1();
+        Cluster cluster2 = results.getCluster2();
+        closestClusters.add(cluster1);
+        closestClusters.add(cluster2);
+
         return closestClusters;
     }
 
@@ -127,7 +119,7 @@ public class ss {
         }
 
         while (C.size() > 1){
-            log.print("progress of clustering: " + C.size() );
+            log.print("Remaining points to end clustering: " + C.size() );
             List<Cluster> result = findClosestClusters(C);
 
             Cluster  cluster1 = result.get(0);

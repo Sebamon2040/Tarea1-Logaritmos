@@ -39,6 +39,7 @@ public class MTree {
     // Método auxiliar para búsqueda recursiva
     private void searchHelper(MTreeNode node, Point q, double r, ArrayList<Point> result) {
         addDiskAccess();
+
         if (node.isLeaf()) {
             // Nodo es una hoja
             for (Entry entry : node.getEntries()) {
@@ -54,9 +55,12 @@ public class MTree {
                 if (distance(entry.getPoint(), q) <= entry.getCoveringRadius() + r) {
 
                     searchHelper(entry.getChildNode(), q, r, result);
+
+
                 }
             }
         }
+
     }
 
     // Método para calcular la distancia euclidiana entre dos puntos
