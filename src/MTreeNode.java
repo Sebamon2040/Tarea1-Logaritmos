@@ -7,7 +7,6 @@ public class MTreeNode {
     private boolean isLeaf;
     private double minCap;
     private double maxCap;
-    private MTreeNode childNode;
     private Point rootPoint;
 
     // Constructor
@@ -16,7 +15,6 @@ public class MTreeNode {
         this.isLeaf = isLeaf;
         this.minCap = Math.floor(maxCapacity / 2);
         this.maxCap = maxCapacity;
-        this.childNode = null;
         this.rootPoint = null;
     }
 
@@ -61,13 +59,7 @@ public class MTreeNode {
         return entries;
     }
 
-    public MTreeNode getChildNode() {
-        return childNode;
-    }
 
-    public void setChildNode(MTreeNode childNode) {
-        this.childNode = childNode;
-    }
 
     public int getHeight() {
         if (this.isLeaf()) {
