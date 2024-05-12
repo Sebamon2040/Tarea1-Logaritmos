@@ -104,6 +104,9 @@ public class cp {
                 tj_sum += Tj.getEntries().size();
 
                 log.print("tamaño de Tj: " + Tj.getEntries().size() + "\n");
+                tj_sum += Tj.getEntries().size();
+
+                log.print("tamaño de Tj: " + Tj.getEntries().size() + "\n");
 
                 Point pfj = Tj.getRootPoint(); // obtengo el punto raiz de Tj
 
@@ -111,6 +114,7 @@ public class cp {
                 // encuentra la hoja en Tsup correspondiente al punto pfj en F y
                 // une Tj a // esa hoja
             }
+            log.print("suma de todos los subarboles: " + tj_sum + "\n");
             log.print("suma de todos los subarboles: " + tj_sum + "\n");
             // Paso 12
             System.out.println("Actualizando los radios cobertores para cada entrada en Tsup...");
@@ -120,6 +124,8 @@ public class cp {
 
             // Paso 13
             System.out.println("Retornando Tsup...");
+            log.print("samples ammount in Tsup: " + samples.size() + "\n");
+            log.print("Entries in Tsup: " + countEntrys(Tsup) + "\n");
             log.print("samples ammount in Tsup: " + samples.size() + "\n");
             log.print("Entries in Tsup: " + countEntrys(Tsup) + "\n");
             return Tsup;
