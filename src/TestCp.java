@@ -21,7 +21,7 @@ public class TestCp {
         double timeTaken = (endTime - startTime) / 1e6; // tiempo en milisegundos
         log.print(mtree.getHeight() + "\n");
         List<Integer> diskAccessesList = new ArrayList<>();
-        // buscar en el Mtree para cada punto
+        // buscar en el Mtree para 100 puntos
         for (Point point : points) {
             int diskAccesses = mtree.search(point, 0.02);
             diskAccessesList.add(diskAccesses);

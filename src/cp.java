@@ -47,15 +47,15 @@ public class cp {
                     List<MTreeNode> childNodes = new ArrayList<>();
                     // obtengo los subarboles que lo remplazaran
                     for (Entry entry : sTree.getEntries()) {
-                        if (entry != null) { // se salta la null
-                            childNodes.add(entry.getChildNode());
-                        }
+                        // se salta la null
+                        childNodes.add(entry.getChildNode());
+
                     }
                     // añado los nuevos subarboles a la lista de subarboles y pongo sus pfj en en
                     // F(samples)
                     for (MTreeNode childNode : childNodes) {
                         subTrees.add(childNode); // añado el subarbol
-                        childNode.getRootPoint(); // obtengo el punto raiz
+
                         samples.add(childNode.getRootPoint()); // añado el punto raiz
                     }
                 } else {
@@ -71,7 +71,7 @@ public class cp {
             List<MTreeNode> Tprime = new ArrayList<>(); // se inicializa T' como una lista vacia
             // paso 9
             for (MTreeNode subTree : subTrees) {
-                if (subTree.getHeight() == h) {
+                if (subTree.getHeight() <= h) {
                     Tprime.add(subTree);
                 } else {
                     // 9.1 se borra el punto pertinenete en F(samples)
@@ -90,18 +90,20 @@ public class cp {
             }
             // Paso 10
             System.out.println("Comenzando la construcción del super-árbol Tsup...");
-            MTreeNode Tsup = buildCp(samples, B, b);
+            log.print("Cantidad de clusters: " + samples.size() + "\n");
+            List<Point> samplesCopy = new ArrayList<>(samples);
+            MTreeNode Tsup = buildCp(samplesCopy, B, b);
             log.print("Tsup is leaf?: " + Tsup.isLeaf() + "\n");
-            for (Entry entry : Tsup.getEntries()) {
-                log.print("entry: " + entry.getPoint() + "\n");
-                log.print("entry child: " + entry.getChildNode() + "\n");
-            }
             System.out.println("Construcción de Tsup completada.");
-
+            log.print("tamaño de Tsup: " + Tsup.getEntries().size() + "\n");
+            log.print("Cantidad de clusters: " + samples.size() + "\n");
             // Paso 11
             System.out.println("Uniendo los subárboles Tprime a las hojas correspondientes en Tsup...");
+            int tj_sum = 0;
             for (MTreeNode Tj : Tprime) {
-                // Encuentra la hoja en Tsup correspondiente al punto pfj en F
+                tj_sum += Tj.getEntries().size();
+
+                log.print("tamaño de Tj: " + Tj.getEntries().size() + "\n");
 
                 Point pfj = Tj.getRootPoint(); // obtengo el punto raiz de Tj
 
@@ -109,7 +111,7 @@ public class cp {
                 // encuentra la hoja en Tsup correspondiente al punto pfj en F y
                 // une Tj a // esa hoja
             }
-
+            log.print("suma de todos los subarboles: " + tj_sum + "\n");
             // Paso 12
             System.out.println("Actualizando los radios cobertores para cada entrada en Tsup...");
             // Actualiza los radios cobertores para cada entrada en Tsup
@@ -118,6 +120,8 @@ public class cp {
 
             // Paso 13
             System.out.println("Retornando Tsup...");
+            log.print("samples ammount in Tsup: " + samples.size() + "\n");
+            log.print("Entries in Tsup: " + countEntrys(Tsup) + "\n");
             return Tsup;
 
         }
@@ -199,12 +203,25 @@ public class cp {
 
     public static void findLeaf(MTreeNode Tsup, MTreeNode Tj, Point pfj) {
         for (Entry entry : Tsup.getEntries()) { // recorro las entrys, buscando la que tiene a pfj
-            if (entry.getPoint().equals(pfj)) {
+            if (entry.getPoint().equals(pfj) & entry.getChildNode() == null) { // si la encuentro
                 entry.setChildNode(Tj);
                 Tsup.setIsLeaf(false); // deja de ser una hoja pues ahora de el cuelga un subarbol
                 return;
+            } else { // revisa el hijo que cuelga de la entrada, si es que tiene uno
+                if (entry.getChildNode() != null) {
+                    findLeaf(entry.getChildNode(), Tj, pfj);
+                }
             }
         }
+    }
+
+    public static boolean haveChildNodes(List<Entry> entries) {
+        for (Entry entry : entries) {
+            if (entry.getChildNode() != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void updateCoveringRadii(MTreeNode node) {
@@ -226,5 +243,28 @@ public class cp {
                 entry.setCoveringRadius(maxDistance);
             }
         }
+    }
+
+    public static int countEntrys(MTreeNode node) {
+        int suma = node.getEntries().size();
+
+        for (Entry entry : node.getEntries()) {
+            if (entry.getChildNode() != null) {
+                suma += countEntrys(entry.getChildNode());
+            }
+        }
+        return suma;
+    }
+
+    private static List<Point> cloneSamples(List<Point> samples) {
+        List<Point> clonedSamples = new ArrayList<>(samples.size());
+        for (Point point : samples) {
+            Point clonedPoint = new Point(point.getX(), point.getY()); // Suponiendo que Point tiene un constructor que
+                                                                       // toma las coordenadas x e y
+            // Si Point es una clase que no tiene métodos para clonar, necesitarás
+            // implementar un método de clonación apropiado o constructor de copia.
+            clonedSamples.add(clonedPoint);
+        }
+        return clonedSamples;
     }
 }
