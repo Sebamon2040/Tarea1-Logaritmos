@@ -1,18 +1,5 @@
-## Getting Started
+## ¿Como ejecutar?
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+Se recomienda el uso de IntelIJ para ejecutar el algoritmo, el cual se hace ejecutando el archivo Experimento.Java. Si se hace desde IntelIj, se puede hacer presionando el botón de los tres puntos arriba en la barra superior , clic y escoger setParameters. Allí , en los argumentos de la función se debe colocar el indice de 2 para crear el arbol. Automáticamente se creará el arbol para ámbos métodos y se buscarán los valores. Los resultados de la ejecución se escribirán en el archivo resultados*{algoritmo}*{índice}.txt .
 
-## Folder Structure
-
-The workspace contains two folders by default, where:
-
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
-
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+Alternativamente, se puede ejecutar via terminal primero compilando usando javac Experimento.Java y luego para ejecutar será java experimento [indice].
